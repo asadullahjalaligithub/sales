@@ -1,6 +1,13 @@
 <?php
 require 'includes/connection.php';
-
+if (!isset($_GET['productid'])) {
+    header('location:index.php');
+    exit();
+}
+$productid = $_GET['productid'];
+$query = "SELECT * from product where productid=$productid";
+$result = execute($query);
+$row = mysqli_fetch_assoc($result);
 ?>
 <!doctype html>
 <html lang="en">
@@ -25,35 +32,32 @@ require 'includes/connection.php';
 <body>
     <div class="container-fluid" dir='rtl'>
         <div class="row text-center">
-            <div class="col-lg-10 col-sm-10">
-                <h1>به فروشگاه امینی خوش آمدید!</h1>
-            </div>
-            <div class="col-2">
-                <img src="images/logo.jpeg" style="border-radius:20px; box-shadow:10px 10px 10px lightgray;" alt=""
-                    width="150" height="100px">
+            <div class="col-lg-12 col-sm-12">
+                <h3>به فروشگاه امینی خوش آمدید!</h3>
             </div>
         </div>
-        <div class="row text-center">
-            <div class="col-3"></div>
-            <div class="col-lg-4 col-sm-4">
-                <label for="search">جستجو</label>
-                <input type='search' class='form-control' id='search'>
-            </div>
-            <div class="col-5">
+        <div class="row-my-5">
+            <div class='col-lg-3 col-sm-6'>
+                <p align='center'>
 
+                    <img src='images/<?php echo $row['image']; ?>' border='1px' height='500px' width='500px'>
+
+                </p>
+                <h4 align='center'>
+                    <?php echo $row['name']; ?>
+                </h4>
+                <h6 align='center'>
+                    <?php echo $row['price']; ?> اففانی
+                </h6>
             </div>
         </div>
-        <div class="row my-5" id='contents'>
-
-        </div>
-
     </div><!-- /.container-fluid -->
     </div>
     <?php include 'includepages/footer.php'; ?>
 
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-    <script src="plugins/jquery/jquery.min.js"></script>
+    <script src=" plugins/jquery/jquery.min.js"></script>
     <!-- Bootstrap 4 -->
     <script src="plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
     <!-- AdminLTE App -->
@@ -70,30 +74,6 @@ require 'includes/connection.php';
 
 <script>
 $(document).ready(function() {
-    function loadItems(value) {
-        $.ajax({
-            url: 'includes/process.php',
-            type: 'post',
-            data: {
-                actionString: 'loadContents',
-                value: value
-            },
-            success: function(response) {
-                $('#contents').html(response);
-            }
 
-        });
-    }
-    $('#search').on('keyup', function(e) {
-        if (e.keycode == 'enter')
-            e.preventDefault();
-        // var value = $(this).val();
-        console.log(value);
-        if (value == "")
-            loadItems("");
-        else
-            loadItems(value);
-    });
-    loadItems("");
 });
 </script>

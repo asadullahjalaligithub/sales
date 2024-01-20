@@ -36,7 +36,7 @@ require '../includes/loginAuthentication.php';
             <!-- Content Header (Page header) -->
             <div class="content-header">
                 <div class="container-fluid">
-                    <div class="row-my-3">
+                    <div class="row my-3">
                         <div class="col-lg-12">
                             <h3>مدیریت اجناس</h3>
                         </div>

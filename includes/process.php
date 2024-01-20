@@ -225,3 +225,30 @@ if (isset($_POST['actionString']) && $_POST['actionString'] == 'updateItem') {
       echo "false";
 
 }
+
+if (isset($_POST["actionString"]) && $_POST["actionString"] == 'loadContents') {
+   $value = $_POST['value'];
+   if ($value == "")
+      $query = "SELECT product.*,category.name as cname ,category.description as cdescription from product
+   inner join category on category.categoryid=product.categoryid";
+   else
+      $query = "SELECT product.*,category.name as cname,category.description as cdescription  from product
+   inner join category on category.categoryid=product.categoryid 
+   where product.name like '%$value%' or product.description like '%$value%' or product.unit like '%$value%' or product.total like '%$value%' or product.price like '%$value%' or category.name like '%$value%' or category.description like '%$value%'";
+   // echo $query;
+   $html = "";
+   $i = 1;
+   $result = execute($query);
+   while ($row = mysqli_fetch_assoc($result)) {
+      $html .= "<div class='col-lg-3 col-sm-6'>
+               <p align='center'>
+               <a href='product.php?productid=" . $row['productid'] . "'>
+                <img src=' images/" . $row['image'] . "' border='1px' height='200px' width='200px'>
+                </a>
+               </p>
+               <h4 align='center'><a href='product.php?productid=" . $row['productid'] . "'>" . $row['name'] . "</a></h4>
+               <h6 align='center'>" . $row['price'] . " اففانی </h6>
+               </div>";
+   }
+   echo $html;
+}
