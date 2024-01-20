@@ -1,14 +1,14 @@
-<?php 
-require 'includes/connection.php';
-require 'includes/loginAuthentication.php';
+<?php
+require '../includes/connection.php';
+require '../includes/loginAuthentication.php';
 
 ?>
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
-    <?php include 'includes/header-links.php'; ?>
-    <link rel="stylesheet" type="text/css" href="dist/css/datatable-css.css">
+    <?php include '../includes/header-links.php'; ?>
+    <link rel="stylesheet" type="text/css" href="../dist/css/datatable-css.css">
     <style>
     .inputError {
         border: solid 1px red;
@@ -19,7 +19,7 @@ require 'includes/loginAuthentication.php';
 <body class="hold-transition sidebar-mini">
     <zdiv class="wrapper">
         <!-- Navbar -->
-        <?php include'includes/top-nav.php'; ?>
+        <?php include '../includes/top-nav.php'; ?>
 
         <!-- /.navbar -->
 
@@ -27,7 +27,7 @@ require 'includes/loginAuthentication.php';
         <aside class="main-sidebar sidebar-dark-primary elevation-4">
 
             <!-- Sidebar -->
-            <?php include'includes/sidebar.php'; ?>
+            <?php include '../includes/sidebar.php'; ?>
             <!-- /.sidebar -->
         </aside>
 
@@ -119,15 +119,15 @@ require 'includes/loginAuthentication.php';
             </div>
         </div>
         <!-- Main Footer -->
-        <?php include'includes/footer.php'; ?>
+        <?php include '../includes/footer.php'; ?>
         </div>
         <!-- ./wrapper -->
 
         <!-- REQUIRED SCRIPTS -->
 
-        <?php include'includes/footer-links.php'; ?>
-        <script src="dist/js/datatable-js.js"></script>
-        <script src="dist/js/bs.custom-file.js"></script>
+        <?php include '../includes/footer-links.php'; ?>
+        <script src="../dist/js/datatable-js.js"></script>
+        <script src="../dist/js/bs.custom-file.js"></script>
 </body>
 
 </html>

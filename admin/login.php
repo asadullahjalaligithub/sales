@@ -19,7 +19,7 @@ if (isset($_SESSION['login']) == 'true') {
     <meta name="description" content="">
     <meta name="author" content="">
     <title>Fabric Management System</title>
-    <link href="dist/css/sb-admin-2.css" rel="stylesheet">
+    <link href="../dist/css/sb-admin-2.css" rel="stylesheet">
     <style>
         .inputError {
             border: solid 1px red;
@@ -45,7 +45,7 @@ if (isset($_SESSION['login']) == 'true') {
                             <div class="col-lg-6">
                                 <div class="p-5">
                                     <div class="text-center">
-                                        <h1 class="h4 text-gray-900 mb-4">Fabric Whole Sale Management System</h1>
+                                        <h1 class="h4 text-gray-900 mb-4">سیستم مدیریتی فروشگاه امینی</h1>
                                     </div>
                                     <form class="user">
                                         <div class="form-group">
@@ -101,9 +101,9 @@ if (isset($_SESSION['login']) == 'true') {
             </div>
         </div>
     </div>
-    <script src="plugins/jquery/jquery.min.js"></script>
+    <script src="../plugins/jquery/jquery.min.js"></script>
     <!-- Bootstrap 4 -->
-    <script src="plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="../plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
     <script>
         $(document).ready(function () {
             $('#loginButton').click(function () {
@@ -117,7 +117,7 @@ if (isset($_SESSION['login']) == 'true') {
                     password.addClass('inputError');
                 else {
                     $.ajax({
-                        url: 'includes/process.php',
+                        url: '../includes/process.php',
                         type: 'post',
                         data: {
                             actionString: 'loginAuthentication',
