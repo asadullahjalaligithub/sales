@@ -170,182 +170,72 @@ if (isset($_POST['actionString']) && $_POST['actionString'] == "updateCategory")
 
 }
 
-// purchase server codes
 
 
+if (isset($_POST['actionString']) && $_POST['actionString'] == 'insertItem') {
+   $name = $_POST['name'];
+   $description = $_POST['description'];
+   $unit = $_POST['unit'];
 
-if (isset($_POST['actionString']) && $_POST['actionString'] == 'viewPurchaseStatus') {
-
-   $query = "select sum(totaldollerprice) as totaldollerpurchase from fabricpurchase";
-   $result = execute($query);
-   $row = mysqli_fetch_assoc($result);
-   $totaldollerpurchase = $row['totaldollerpurchase'];
-   freeResult($result);
-
-   $query = "select sum(doller) as totaldollersubmit from draw";
-   $result = execute($query);
-   $row = mysqli_fetch_assoc($result);
-   $totaldollersubmit = $row['totaldollersubmit'];
-   freeResult($result);
-   $balance = $totaldollerpurchase - $totaldollersubmit;
-
-   $query = "select sum(totaldollerprice) as kldhmd from fabricpurchase inner join company on company.companyid=fabricpurchase.companyid
-      where company.marka='KLD' or company.marka='HMD'";
-   $result = execute($query);
-   $row = mysqli_fetch_assoc($result);
-   $kldhmd = $row['kldhmd'];
-   freeResult($result);
-   $info = ['totaldollerprice' => $totaldollerpurchase, 'totaldollersubmit' => $totaldollersubmit, 'balance' => $balance, 'kldhmd' => $kldhmd];
-   echo json_encode($info);
-}
-
-if (isset($_POST['actionString']) && $_POST['actionString'] == 'insertPurchase') {
-   $war = $_POST['war'];
-   $meter = $_POST['meter'];
-   $date = $_POST['date'];
-   if (!isset($_POST['yenprice']))
-      $yenprice = 0;
-   else
-      $yenprice = $_POST['yenprice'];
+   $price = $_POST['price'];
+   $total = $_POST['total'];
+   $categoryid = $_POST['categoryid'];
 
 
-   if (!isset($_POST['yenexchange']))
-      $yenexchange = 0;
-   else
-      $yenexchange = $_POST['yenexchange'];
+   $finalDatabaseName = null;
 
-   $bundle = $_POST['bundle'];
-   $companyid = $_POST['companyid'];
-   $fabricid = $_POST['fabricid'];
-   $vendorcompany = $_POST['vendorcompany'];
-   if (!isset($_POST['ttcomission']))
-      $ttcomission = 0;
-   else
-      $ttcomission = $_POST['ttcomission'];
-
-   $fabricpurchasecode = $_POST['fabricpurchasecode'];
-
-   if (!isset($_POST['totalyenprice']))
-      $totalyenprice = 0;
-   else
-      $totalyenprice = $_POST['totalyenprice'];
-
-   $totaldollerprice = $_POST['totaldollerprice'];
-
-   if (!isset($_POST['dollerprice']))
-      $dollerprice = 0;
-   else
-      $dollerprice = $_POST['dollerprice'];
-   $transportid = $_POST['transportcompany'];
-
-   $finalDatabaseName1 = null;
-   $finalDatabaseName2 = null;
-
-   if (isset($_FILES['bankreceiptphoto']) && $_FILES['bankreceiptphoto']['error'] == UPLOAD_ERR_OK) {
-      $realPersonName1 = $_FILES['bankreceiptphoto']['name'];
-      $tempName1 = $_FILES['bankreceiptphoto']['tmp_name'];
-      $finalDatabaseName1 = time() . ".jpg";
-      $destination = "../images/" . $finalDatabaseName1;
+   if (isset($_FILES['itemphoto']) && $_FILES['itemphoto']['error'] == UPLOAD_ERR_OK) {
+      $realPersonName1 = $_FILES['itemphoto']['name'];
+      $tempName1 = $_FILES['itemphoto']['tmp_name'];
+      $finalDatabaseName = time() . ".jpg";
+      $destination = "../images/" . $finalDatabaseName;
       move_uploaded_file($tempName1, $destination);
    }
-   if (isset($_FILES['packagephoto']) && $_FILES['packagephoto']['error'] == UPLOAD_ERR_OK) {
-      $realPersonName2 = $_FILES['packagephoto']['name'];
-      $tempName2 = $_FILES['packagephoto']['tmp_name'];
-      $finalDatabaseName2 = time() . "1.jpg";
-      $destination = "../images/" . $finalDatabaseName2;
-      move_uploaded_file($tempName2, $destination);
-   }
 
-   $query = "insert into fabricpurchase (bundle,war,meter,yenprice,yenexchange,ttcommission,packagephoto,bankreceiptphoto,date,fabricid,companyid,vendorcompany,fabricpurchasecode,dollerprice,totaldollerprice,totalyenprice)  values ('$bundle','$war','$meter','$yenprice','$yenexchange','$ttcomission','$finalDatabaseName2','$finalDatabaseName1','$date','$fabricid','$companyid','$vendorcompany','$fabricpurchasecode','$dollerprice','$totaldollerprice','$totalyenprice');";
-   $query .= "insert into transportdeal (fabricpurchaseid,transportid) values(last_insert_id(),$transportid);";
-   if (mysqli_multi_query($connection, $query))
+   $query = "insert into product(name,description,unit,price,total,image,categoryid)  values ('$name','$description','$unit','$price','$total','$finalDatabaseName','$categoryid');";
+   if (execute($query))
       echo "true";
    else
       echo "false";
-   // } 
-   // else 
-   // {
-//    $query = "insert into fabricpurchase (bundle,meter,war,yenprice,yenexchange,ttcommission,packagephoto,bankreceiptphoto,date,fabricid,companyid,vendorcompany,fabricpurchasecode)  values ('$bundle','$war','$meter','$yenprice','$yenexchange','$ttcomission','$finalDatabaseName2','null','$date','$fabricid','$companyid','$vendorcompany','$fabricpurchasecode')";
-//   // echo $query;
-//    if(mysqli_query($connection,$query))
-//    echo "true";
-//    else 
-   // echo "false";
-// }
+
 }
 
 
-if (isset($_POST['actionString']) && $_POST['actionString'] == "loadFabricPurchase") {
+if (isset($_POST['actionString']) && $_POST['actionString'] == "loadItems") {
 
-   $query = "SELECT *,vendorcompany.name as vendor,fabric.name as fabricname from fabricpurchase inner join company on fabricpurchase.companyid=company.companyid
-   inner join fabric on fabricpurchase.fabricid=fabric.fabricid inner join vendorcompany on vendorcompany.vendorcompanyid=fabricpurchase.vendorcompany";
+   $query = "SELECT product.*,category.name as cname from product inner join category on product.categoryid=category.categoryid";
    $result = mysqli_query($connection, $query);
    $html = array();
+   $i = 1;
    while ($rows = mysqli_fetch_assoc($result)) {
       $row = array();
-      $row[] = "<a href='fabricdesign.php?fabricpurchaseid=" . $rows['fabricpurchaseid'] . "' target='_blank'>" . $rows['fabricpurchasecode'] . "</a>";
-      $row[] = $rows['vendor'];
-      $row[] = $rows['bundle'];
-      $row[] = $rows['fabricname'];
-      $row[] = $rows['marka'];
-      $row[] = $rows['meter'];
-      $row[] = $rows['war'];
-      $row[] = $rows['yenprice'];
-      // $row[]=round(($rows['yenprice']*$rows['meter']),2);// total yen price
-      $row[] = $rows['totalyenprice'];
-      $row[] = $rows['yenexchange'];
-      //   $dollerPrice=round(($rows ['yenprice']/$rows['yenexchange']),2);// doller price
-      // $row[]=$dollerPrice;
-      $row[] = $rows['dollerprice'];
-      //  $row[]=round(($dollerPrice*$rows['meter']),2);// total doller price
-      $row[] = $rows['totaldollerprice'];
-      $row[] = $rows['ttcommission'];
-      if ($rows['ttcommission'] != 0)
-         $row[] = round(($rows['dollerprice'] + ($rows['ttcommission'] / $rows['meter'])), 2);
-      else
-         $row[] = $rows['dollerprice'];
-      if ($rows['packagephoto'] == NULL)
-         $row[] = "<img src='images/blank-image.png' width='60px' height='60px'>";
-      else
-         $row[] = "<a target='_blank'href='images/" . $rows['packagephoto'] . "'><img src='images/" . $rows['packagephoto'] . "' width='60px' height='60px'></a>";
+      $row[] = $i;
+      $row[] = $rows['name'];
+      $row[] = $rows['description'];
+      $row[] = $rows['price'];
+      $row[] = $rows['unit'];
+      $row[] = $rows['total'];
+      $row[] = $rows['cname'];
 
-      if ($rows['bankreceiptphoto'] == NULL)
+      if ($rows['image'] == NULL)
          $row[] = "<img src='images/blank-image.png' width='60px' height='60px'>";
       else
-         $row[] = "<a target='_blank' href='images/" . $rows['bankreceiptphoto'] . "'><img src='images/" . $rows['bankreceiptphoto'] . "' width='60px' height='60px'></a>";
-      $button = "<button class='btn btn-sm  btn-warning mb-1  editButton fa fa-edit' value='" . $rows['fabricpurchaseid'] . "'></button>
-         <button class='btn btn-sm btn-danger  deleteButton fa fa-trash' value='" . $rows['fabricpurchaseid'] . "'></button>";
+         $row[] = "<a target='_blank' href='images/" . $rows['image'] . "'><img src='images/" . $rows['image'] . "' width='60px' height='60px'></a>";
+      $button = "<button class='btn btn-sm  btn-warning mb-1  editButton fa fa-edit' value='" . $rows['productid'] . "'></button>
+         <button class='btn btn-sm btn-danger  deleteButton fa fa-trash' value='" . $rows['productid'] . "'></button>";
 
       $row[] = $button;
-
-
-      if ($rows['status'] == 'complete') {
-         $row[] = "<span class='fa fa-check text-success'></span>";
-      } else if ($rows['status'] == 'incomplete') {
-         // checking the design status for this purchase
-         $query = "SELECT count(fabricdesign.fabricdesignid) as count from fabricpurchase 
-         inner join fabricdesign on fabricdesign.fabricpurchaseid=fabricpurchase.fabricpurchaseid where fabricdesign.status='incomplete' and fabricpurchase.fabricpurchaseid=" . $rows['fabricpurchaseid'];
-         $result2 = execute($query);
-         $rows2 = mysqli_fetch_assoc($result2);
-         if ($rows2['count'] == 0) { // it means all the bundles are completed hence the fabricdesign status should be updated to complete
-            $query = "UPDATE fabricpurchase set status='complete' where fabricpurchase.fabricpurchaseid=" . $rows['fabricpurchaseid'];
-            if (execute($query))
-               $row[] = "<span class='fa fa-check text-success'></span>";
-         } else {
-            $row[] = "<span class='fa fa-times text-danger'></span>";
-         }
-         freeResult($result2);
-      }
       $html[] = $row;
+      $i++;
    }
    echo json_encode($html);
 
 }
 
 // purchase server codes
-if (isset($_POST['actionString']) && $_POST['actionString'] == 'deletePurchase') {
-   $purchaseid = $_POST['purchaseid'];
-   $query = "delete from fabricpurchase where fabricpurchaseid=$purchaseid";
+if (isset($_POST['actionString']) && $_POST['actionString'] == 'deleteItem') {
+   $productid = $_POST['productid'];
+   $query = "delete from product where productid=$productid";
    if (execute($query))
       echo "true";
    else
@@ -354,95 +244,60 @@ if (isset($_POST['actionString']) && $_POST['actionString'] == 'deletePurchase')
 
 
 // purchase server codes
-if (isset($_POST['actionString']) && $_POST['actionString'] == 'viewPurchase') {
+if (isset($_POST['actionString']) && $_POST['actionString'] == 'viewItem') {
 
-   $purchaseid = $_POST['purchaseid'];
-   $query = "select * from fabricpurchase where fabricpurchaseid=$purchaseid";
-   $result = mysqli_query($connection, $query);
+   $productid = $_POST['productid'];
+   $query = "select * from product where productid=$productid";
+   $result = execute($query);
    $row = mysqli_fetch_assoc($result);
    echo json_encode($row);
 }
 
 
 // purchase server codes
-if (isset($_POST['actionString']) && $_POST['actionString'] == 'updatePurchase') {
-   $war = $_POST['war'];
-   $meter = $_POST['meter'];
-   $date = $_POST['date'];
-   if (!isset($_POST['yenprice']))
-      $yenprice = 0;
-   else
-      $yenprice = $_POST['yenprice'];
+if (isset($_POST['actionString']) && $_POST['actionString'] == 'updateItem') {
+   $name = $_POST['name'];
+   $description = $_POST['description'];
+   $unit = $_POST['unit'];
+
+   $price = $_POST['price'];
+   $total = $_POST['total'];
+   $categoryid = $_POST['categoryid'];
+   $productid = $_POST['productid'];
 
 
-   if (!isset($_POST['yenexchange']))
-      $yenexchange = 0;
-   else
-      $yenexchange = $_POST['yenexchange'];
+   $finalDatabaseName = null;
 
-   $bundle = $_POST['bundle'];
-   $companyid = $_POST['companyid'];
-   $fabricid = $_POST['fabricid'];
-   $vendorcompany = $_POST['vendorcompany'];
-   if (!isset($_POST['ttcomission']))
-      $ttcomission = 0;
-   else
-      $ttcomission = $_POST['ttcomission'];
+   if (isset($_FILES['itemphoto']) && $_FILES['itemphoto']['error'] == UPLOAD_ERR_OK) {
 
-   $fabricpurchasecode = $_POST['fabricpurchasecode'];
+      // retrieving older company logo name to delete it from folder in case of image update
+      $q = "select * from product where productid=" . $productid;
+      $result = execute($q);
+      $row = mysqli_fetch_assoc($result);
 
-   if (!isset($_POST['totalyenprice']))
-      $totalyenprice = 0;
-   else
-      $totalyenprice = $_POST['totalyenprice'];
-
-   $totaldollerprice = $_POST['totaldollerprice'];
-
-   if (!isset($_POST['dollerprice']))
-      $dollerprice = 0;
-   else
-      $dollerprice = $_POST['dollerprice'];
-   $transportid = $_POST['transportcompany'];
-
-   $finalDatabaseName1 = null;
-   $finalDatabaseName2 = null;
-
-   $fabricpurchaseid = $_POST['fabricpurchaseid'];
-
-   // $realPersonName2 = $_FILES['packagephoto']['name'];
-   // $tempName2 = $_FILES['packagephoto']['tmp_name'];
-   // $finalDatabaseName2 = time()."1.jpg";
-   // $destination = "../images/".$finalDatabaseName2;
-   // move_uploaded_file($tempName2,$destination);
-   // if(isset($_FILES['bankreceiptphoto']) && $_FILES['bankreceiptphoto']['error']==UPLOAD_ERR_OK)
-   // {
+      $realName = $_FILES['itemphoto']['name'];
+      $tempName1 = $_FILES['itemphoto']['tmp_name'];
+      $finalDatabaseName = time() . ".jpg";
+      $destination = "../images/" . $finalDatabaseName;
+      move_uploaded_file($tempName1, $destination);
 
 
-   //    $realPersonName1 = $_FILES['bankreceiptphoto']['name'];
-   //    $tempName1 = $_FILES['bankreceiptphoto']['tmp_name'];
-   //    $finalDatabaseName1 = time().".jpg";
-   //    $destination = "../images/".$finalDatabaseName1;
-   //    move_uploaded_file($tempName1,$destination);
+      $query = "update product set image='$finalDatabaseName' where productid=$productid";
+      if (execute($query)) {
+         if (!empty($row['image']) && file_exists('../images/' . $row['image']))
+            unlink('../images/' . $row['image']);
+      }
+   }
 
-
-   // }
-   $query = "update  fabricpurchase 
-         set bundle=$bundle,
-         meter=$meter,war=$war,
-         yenprice=$yenprice,
-         yenexchange=$yenexchange,
-         ttcommission=$ttcomission,
-         date='$date',
-         fabricid='$fabricid',
-         companyid='$companyid',
-         vendorcompany='$vendorcompany',
-         dollerprice='$dollerprice',
-         totaldollerprice='$totaldollerprice',
-         totalyenprice='$totalyenprice',
-         fabricpurchasecode='$fabricpurchasecode' where fabricpurchaseid='$fabricpurchaseid'";
-   $query2 = "update transportdeal set transportid='$transportid' where fabricpurchaseid='$fabricpurchaseid'";
+   $query = "update  product 
+         set name='$name',
+         total=$total,
+         price=$price,
+         description='$description',
+         unit='$unit',
+         categoryid='$categoryid' where productid='$productid'";
    // echo $query;
-   if (execute($query) && execute($query2))
+   if (execute($query))
       echo "true";
    else
       echo "false";

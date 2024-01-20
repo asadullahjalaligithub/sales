@@ -10,9 +10,9 @@ require 'includes/loginAuthentication.php';
     <?php include 'includes/header-links.php'; ?>
     <link rel="stylesheet" type="text/css" href="dist/css/datatable-css.css">
     <style>
-    .inputError {
-        border: solid 1px red;
-    }
+        .inputError {
+            border: solid 1px red;
+        }
     </style>
 </head>
 
@@ -170,135 +170,142 @@ require 'includes/loginAuthentication.php';
 </html>
 
 <script>
-$(document).ready(function() {
-    $("a[href='category.php']").addClass('active');
-    var Records = $('#tableRecords').DataTable({
-        columnDefs: [{
-            className: 'dt-right',
-            targets: '_all'
-        }],
-        ajax: {
-            url: 'includes/process.php',
-            dataSrc: '',
-            type: 'post',
-            data: {
-                actionString: 'loadCategory'
+    $(document).ready(function () {
+        $("a[href='category.php']").addClass('active');
+        // validation function  
+        function validateValue(value) {
+            if (!$.isNumeric(value) || value.trim() == "")
+                return false;
+            else
+                return true;
+        }
+        var Records = $('#tableRecords').DataTable({
+            columnDefs: [{
+                className: 'dt-right',
+                targets: '_all'
+            }],
+            ajax: {
+                url: 'includes/process.php',
+                dataSrc: '',
+                type: 'post',
+                data: {
+                    actionString: 'loadCategory'
+                },
             },
-        },
-    });
-    $('#inputForm .saveButton').on('click', function(e) {
-        var name, description;
-        name = $('#inputForm .name');
+        });
+        $('#inputForm .saveButton').on('click', function (e) {
+            var name, description;
+            name = $('#inputForm .name');
 
-        description = $('#inputForm .description');
-        name.removeClass('inputError');
+            description = $('#inputForm .description');
+            name.removeClass('inputError');
 
-        description.removeClass('inputError');
-        if (name.val() == "")
-            name.addClass('inputError');
-        else {
+            description.removeClass('inputError');
+            if (name.val() == "")
+                name.addClass('inputError');
+            else {
+                $.ajax({
+                    url: 'includes/process.php',
+                    type: 'post',
+                    data: {
+                        actionString: 'insertCategory',
+                        name: name.val(),
+                        description: description.val(),
+                    },
+                    success: function (response) {
+                        if (response.trim() == 'true') {
+                            $('#inputForm')[0].reset();
+                            $('#messageModal').modal('show');
+                            $('#messageModal .modal-body').text(
+                                "معلومات ثبت گردید");
+                            Records.ajax.reload();
+                        }
+                    }
+
+                });
+            }
+        });
+        // delete request
+        $('#tableRecords').on('click', '.deleteButton', function () {
+            var value = $(this).val();
             $.ajax({
                 url: 'includes/process.php',
                 type: 'post',
                 data: {
-                    actionString: 'insertCategory',
-                    name: name.val(),
-                    description: description.val(),
+                    actionString: 'deleteCategory',
+                    categoryid: value
                 },
-                success: function(response) {
+                success: function (response) {
                     if (response.trim() == 'true') {
-                        $('#inputForm')[0].reset();
                         $('#messageModal').modal('show');
                         $('#messageModal .modal-body').text(
-                            "معلومات ثبت گردید");
+                            "مورد موفقانه حذف گردید  ");
                         Records.ajax.reload();
+                    } else {
+                        $('#messageModal').modal('show');
+                        $('#messageModal .modal-body').html(
+                            "مورد قابل حذف نمیباشد.<br> علت: وابیستگی با دیگر معلومات! "
+                        );
                     }
                 }
 
             });
-        }
-    });
-    // delete request
-    $('#tableRecords').on('click', '.deleteButton', function() {
-        var value = $(this).val();
-        $.ajax({
-            url: 'includes/process.php',
-            type: 'post',
-            data: {
-                actionString: 'deleteCategory',
-                categoryid: value
-            },
-            success: function(response) {
-                if (response.trim() == 'true') {
-                    $('#messageModal').modal('show');
-                    $('#messageModal .modal-body').text(
-                        "مورد موفقانه حذف گردید  ");
-                    Records.ajax.reload();
-                } else {
-                    $('#messageModal').modal('show');
-                    $('#messageModal .modal-body').html(
-                        "مورد قابل حذف نمیباشد.<br> علت: وابیستگی با دیگر معلومات! "
-                    );
-                }
-            }
-
         });
-    });
-    // edit view request
-    $('#tableRecords').on('click', '.editButton', function() {
-        var value = $(this).val();
-        $.ajax({
-            url: 'includes/process.php',
-            type: 'post',
-            dataType: 'json',
-            data: {
-                actionString: 'viewCategory',
-                categoryid: value
-            },
-            success: function(response) {
-                $('#editModal').modal('show');
-                $('#updateForm .categoryid').val(response.categoryid);
-                $('#updateForm .name').val(response.name);
-                $('#updateForm .description').val(response.description);
-            }
-
-        });
-    });
-
-    // edit record request
-    $('#updateForm .updateButton').on('click', function(e) {
-        var name, description, categoryid;
-        categoryid = $('#updateForm .categoryid');
-        name = $('#updateForm .name');
-
-        description = $('#updateForm .description');
-        name.removeClass('inputError');
-        description.removeClass('inputError');
-        if (name.val() == "")
-            name.addClass('inputError');
-        else {
+        // edit view request
+        $('#tableRecords').on('click', '.editButton', function () {
+            var value = $(this).val();
             $.ajax({
                 url: 'includes/process.php',
                 type: 'post',
+                dataType: 'json',
                 data: {
-                    actionString: 'updateCategory',
-                    name: name.val(),
-                    description: description.val(),
-                    categoryid: categoryid.val()
+                    actionString: 'viewCategory',
+                    categoryid: value
                 },
-                success: function(response) {
-                    if (response.trim() == 'true') {
-                        $('#updateForm')[0].reset();
-                        $('#editModal').modal('hide');
-                        $('#messageModal').modal('show');
-                        $('#messageModal .modal-body').text(
-                            "معلومات تغییر کرد  ");
-                        Records.ajax.reload();
-                    }
+                success: function (response) {
+                    $('#editModal').modal('show');
+                    $('#updateForm .categoryid').val(response.categoryid);
+                    $('#updateForm .name').val(response.name);
+                    $('#updateForm .description').val(response.description);
                 }
 
             });
-        }
+        });
+
+        // edit record request
+        $('#updateForm .updateButton').on('click', function (e) {
+            var name, description, categoryid;
+            categoryid = $('#updateForm .categoryid');
+            name = $('#updateForm .name');
+
+            description = $('#updateForm .description');
+            name.removeClass('inputError');
+            description.removeClass('inputError');
+            if (name.val() == "")
+                name.addClass('inputError');
+            else {
+                $.ajax({
+                    url: 'includes/process.php',
+                    type: 'post',
+                    data: {
+                        actionString: 'updateCategory',
+                        name: name.val(),
+                        description: description.val(),
+                        categoryid: categoryid.val()
+                    },
+                    success: function (response) {
+                        if (response.trim() == 'true') {
+                            $('#updateForm')[0].reset();
+                            $('#editModal').modal('hide');
+                            $('#messageModal').modal('show');
+                            $('#messageModal .modal-body').text(
+                                "معلومات تغییر کرد  ");
+                            Records.ajax.reload();
+                        }
+                    }
+
+                });
+            }
+        });
     });
-});
 </script>
