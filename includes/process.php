@@ -6,21 +6,16 @@ require('functions.php');
 if (isset($_POST['actionString']) && $_POST['actionString'] == 'loginAuthentication') {
    $username = $_POST['username'];
    $password = $_POST['password'];
-   $query = "select * from users where (username='$username' or email='$username') and password='$password' and privilage='admin' and status='enable' ";
+   $query = "select * from user where username='$username' and password='$password' and privilage='admin'";
    $result = mysqli_query($connection, $query);
    if (mysqli_num_rows($result) == 1) {
       $row = mysqli_fetch_assoc($result);
-      $_SESSION['name'] = $row['name'];
-      $_SESSION['surname'] = $row['surname'];
-      $_SESSION['username'] = $row['username'];
+      $_SESSION['firstname'] = $row['firstname'];
+      $_SESSION['lastname'] = $row['lastname'];
       $_SESSION['password'] = $row['password'];
       $_SESSION['userid'] = $row['userid'];
-      $_SESSION['email'] = $row['email'];
-      $_SESSION['address'] = $row['address'];
-      $_SESSION['dob'] = $row['dob'];
       $_SESSION['privilage'] = $row['privilage'];
       $_SESSION['status'] = $row['status'];
-      $_SESSION['user-image'] = $row['user-image'];
       $_SESSION['login'] = 'true';
       echo "true";
    } else
@@ -110,98 +105,10 @@ if (isset($_POST['actionString']) && $_POST['actionString'] == 'loginCustomer') 
    } else
       echo "false";
 }
-// khalidrasidat server code pages
-
-if (isset($_POST['actionString']) && $_POST['actionString'] == "insertKhalidRasid") {
-   $exchangerate = $_POST['rasidatexchangerate'];
-   // $description=$_POST['description'];
-   $doller = $_POST['rasidatdollerprice'];
-   $date1 = $_POST['date1'];
-   $sarafiid = $_POST['sarafiid'];
-   $companyid = $_POST['vendorcompany'];
-   $yen = $_POST['rasidatyenprice'];
-   $query = "insert into draw  (date1,doller,sarafiid,yen,exchangerate,companyid) values('$date1','$doller','$sarafiid','$yen','$exchangerate','$companyid')";
-   if (mysqli_query($connection, $query))
-      echo "true";
-   else
-      echo "false";
-
-}
-
-
-if (isset($_POST['actionString']) && $_POST['actionString'] == "deleteKhalidRasid") {
-   $drawid = $_POST['drawid'];
-   // $description=$_POST['description'];
-   $query = "delete from draw where drawid=$drawid";
-   if (execute($query))
-      echo "true";
-   else
-      echo "false";
-
-}
-
-if (isset($_POST['actionString']) && $_POST['actionString'] == "loadRasidatKhalid") {
-   $query = "select draw.*,vendorcompany.name as companyname,sarafi.fullname as sarafname from draw inner join sarafi on sarafi.sarafiid=draw.sarafiid inner join vendorcompany on vendorcompany.vendorcompanyid=draw.companyid";
-   $result = mysqli_query($connection, $query);
-   $html = array();
-   while ($rows = mysqli_fetch_assoc($result)) {
-      $row = array();
-      $row[] = $rows['drawid'];
-      $row[] = $rows['date1'];
-      // $dateValue = strtotime($rows['date1']);                     
-      // $yr = date("Y", $dateValue) ." "; 
-      // $mon = date("m", $dateValue)." "; 
-      // $date = date("d", $dateValue);
-      // $dateValue=gregoriantojd($mon,$date,$yr);
-      // $row[]=$dateValue;
-      $row[] = $rows['yen'];
-      $row[] = $rows['exchangerate'];
-      $row[] = $rows['doller'];
-      $row[] = $rows['companyname'];
-      $row[] = $rows['sarafname'];
-      if ($rows['photo'] == NULL)
-         $row[] = "<img src='images/blank-image.png' width='60px' height='60px'>";
-      else
-         $row[] = "<a target='_blank'href='images/" . $rows['photo'] . "'><img src='images/" . $rows['photo'] . "' width='60px' height='60px'></a>";
-      $button = "<button class='btn btn-sm btn-primary mb-1 editButton' value='" . $rows['drawid'] . "'>تصحیح</button>
-         <button class='btn btn-sm btn-danger mb-1 deleteButton' value='" . $rows['drawid'] . "'>حذف</button>";
-      $row[] = $button;
-      $html[] = $row;
-   }
-   echo json_encode($html);
-
-}
-//gereft khalid
-if (isset($_POST['actionString']) && $_POST['actionString'] == "loadGereftKhalid") {
-   $query = "select draw.*,sarafi.fullname as sarafname from draw inner join sarafi on sarafi.sarafiid=draw.sarafiid  where draw.companyid is null";
-   $result = mysqli_query($connection, $query);
-   $html = array();
-   while ($rows = mysqli_fetch_assoc($result)) {
-      $row = array();
-      $row[] = $rows['drawid'];
-      $row[] = $rows['date1'];
-      $row[] = $rows['doller'];
-      $row[] = $rows['sarafname'];
-      if ($rows['photo'] == NULL)
-         $row[] = "<img src='images/blank-image.png' width='60px' height='60px'>";
-      else
-         $row[] = "<a target='_blank'href='images/" . $rows['photo'] . "'><img src='images/" . $rows['photo'] . "' width='60px' height='60px'></a>";
-      $button = "<button class='btn btn-sm btn-primary mb-1 editButton' value='" . $rows['drawid'] . "'>تصحیح</button>
-         <button class='btn btn-sm btn-danger mb-1 deleteButton' value='" . $rows['drawid'] . "'>حذف</button>";
-      $row[] = $button;
-      $html[] = $row;
-   }
-   echo json_encode($html);
-
-}
-
-
-if (isset($_POST['actionString']) && $_POST['actionString'] == "insertKhalidGereft") {
+if (isset($_POST['actionString']) && $_POST['actionString'] == "insertCategory") {
+   $name = $_POST['name'];
    $description = $_POST['description'];
-   $doller = $_POST['dolleramount'];
-   $date1 = $_POST['date3'];
-   $sarafiid = $_POST['sarafiid'];
-   $query = "insert into draw  (date1,doller,sarafiid,description) values('$date1','$doller','$sarafiid','$description')";
+   $query = "insert into category  (name,description) values ('$name','$description')";
    if (execute($query))
       echo "true";
    else
@@ -210,10 +117,31 @@ if (isset($_POST['actionString']) && $_POST['actionString'] == "insertKhalidGere
 }
 
 
-if (isset($_POST['actionString']) && $_POST['actionString'] == "deleteKhalidGereft") {
-   $drawid = $_POST['drawid'];
-   // $description=$_POST['description'];
-   $query = "delete from draw where drawid=$drawid";
+if (isset($_POST['actionString']) && $_POST['actionString'] == "loadCategory") {
+   $query = "SELECT * from category";
+   $result = mysqli_query($connection, $query);
+   $html = array();
+   $i = 1;
+   while ($rows = mysqli_fetch_assoc($result)) {
+      $row = array();
+      $row[] = $i;
+      $row[] = $rows['name'];
+      $row[] = $rows['description'];
+      $button = "<button class='btn btn-sm btn-primary mb-1 editButton' value='" . $rows['categoryid'] . "'>تصحیح</button>
+         <button class='btn btn-sm btn-danger mb-1 deleteButton' value='" . $rows['categoryid'] . "'>حذف</button>";
+      $row[] = $button;
+      $html[] = $row;
+      $i++;
+   }
+   echo json_encode($html);
+
+}
+
+
+
+if (isset($_POST['actionString']) && $_POST['actionString'] == "deleteCategory") {
+   $categoryid = $_POST['categoryid'];
+   $query = "delete from category where categoryid=$categoryid";
    if (execute($query))
       echo "true";
    else
@@ -221,351 +149,21 @@ if (isset($_POST['actionString']) && $_POST['actionString'] == "deleteKhalidGere
 
 }
 
-// sarafi page server codes
-if (isset($_POST['actionString']) && $_POST['actionString'] == "insertSarafi") {
-   $fullname = $_POST['fullname'];
-   $phone = $_POST['phone'];
-   $description = $_POST['description'];
-   $shopno = $_POST['shopno'];
-   $location = $_POST['location'];
-   $query = "insert into sarafi  (fullname,phone,location,shopno,description) values('$fullname','$phone','$location','$shopno','$description')";
-   if (mysqli_query($connection, $query))
-      echo "true";
-   else
-      echo "false";
 
-}
-
-if (isset($_POST['actionString']) && $_POST['actionString'] == "loadUsers") {
-   $query = "select * from users";
-   $result = mysqli_query($connection, $query);
-   $html = array();
-   while ($rows = mysqli_fetch_assoc($result)) {
-      $row = array();
-      $row[] = $rows['name'];
-      $row[] = $rows['phone'];
-      $row[] = $rows['email'];
-      $row[] = $rows['description'];
-      $row[] = $rows['description'];
-      $privilages = "";
-      if ($rows['purchase'] == 'true')
-         $privilages .= "{خریداری}";
-      if ($rows['sales'] == 'true')
-         $privilages .= "{فروشات}";
-      if ($rows['sarafi'] == 'true')
-         $privilages .= "{صرافی}";
-      if ($rows['sarai'] == 'true')
-         $privilages .= "{سرایها}";
-      if ($rows['reports'] == 'true')
-         $privilages .= "{راپورها}";
-      if ($rows['stock'] == 'true')
-         $privilages .= "{گدام}";
-      if ($rows['manager'] == 'true')
-         $privilages .= "{صلاحیت مدیر}";
-      if ($rows['mazar'] == 'true')
-         $privilages .= "{حصابات مزارشریف}";
-      if ($rows['thirdfloor'] == 'true')
-         $privilages .= "{حسابات دوکان منزل سوم}";
-      if ($rows['firstfloor'] == 'true')
-         $privilages .= "{حسابات دوکان منزل اول}";
-      if ($rows['transport'] == 'true')
-         $privilages .= "{ترانسپورت}";
-      $row[] = $privilages;
-      $button = "<button class='btn btn-sm btn-primary mb-1 editButton' value='" . $rows['userid'] . "'>تصحیح</button>
-         <button class='btn btn-sm btn-danger mb-1 deleteButton' value='" . $rows['userid'] . "'>حذف</button>";
-      $row[] = $button;
-      $html[] = $row;
-   }
-   echo json_encode($html);
-
-}
-
-if (isset($_POST['actionString']) && $_POST['actionString'] == "loadSarafi") {
-   $query = "select * from sarafi";
-   $result = mysqli_query($connection, $query);
-   $html = array();
-   while ($rows = mysqli_fetch_assoc($result)) {
-      $row = array();
-      $row[] = $rows['sarafiid'];
-      $row[] = $rows['fullname'];
-      $row[] = $rows['location'];
-      $row[] = $rows['shopno'];
-      $row[] = $rows['phone'];
-      $row[] = $rows['description'];
-      $button = "<button class='btn btn-sm btn-primary mb-1 editButton' value='" . $rows['sarafiid'] . "'>تصحیح</button>
-         <button class='btn btn-sm btn-danger mb-1 deleteButton' value='" . $rows['sarafiid'] . "'>حذف</button>";
-      $row[] = $button;
-      $html[] = $row;
-   }
-   echo json_encode($html);
-
-}
-
-// company page server codes
-
-
-if (isset($_POST['actionString']) && $_POST['actionString'] == "insertCompany") {
-   $company = $_POST['company'];
-   $marka = $_POST['marka'];
-   $description = $_POST['description'];
-   $query = "insert into company  (name,marka,description) values('$company','$marka','$description')";
-   if (mysqli_query($connection, $query))
-      echo "true";
-   else
-      echo "false";
-
-}
-
-if (isset($_POST['actionString']) && $_POST['actionString'] == "loadCompany") {
-   $query = "select * from company";
-   $result = mysqli_query($connection, $query);
-   $html = array();
-   while ($rows = mysqli_fetch_assoc($result)) {
-      $row = array();
-      $row[] = $rows['companyid'];
-      $row[] = $rows['name'];
-      $row[] = $rows['marka'];
-      $row[] = $rows['description'];
-      $button = "<button class='btn btn-sm btn-primary mb-1 editButton' value='" . $rows['companyid'] . "'>تصحیح</button>
-         <button class='btn btn-sm btn-danger mb-1 deleteButton' value='" . $rows['companyid'] . "'>حذف</button>";
-      $row[] = $button;
-      $html[] = $row;
-   }
-   echo json_encode($html);
-
-}
-
-if (isset($_POST['actionString']) && $_POST['actionString'] == "deleteCompany") {
-   $companyid = $_POST['companyid'];
-   $query = "delete from company where companyid=$companyid";
-   if (mysqli_query($connection, $query))
-      echo "true";
-   else
-      echo "false";
-}
-if (isset($_POST['actionString']) && $_POST['actionString'] == "viewCompany") {
-   $companyid = $_POST['companyid'];
-   $query = "select * from company where companyid=$companyid";
-   $result = mysqli_query($connection, $query);
+if (isset($_POST['actionString']) && $_POST['actionString'] == "viewCategory") {
+   $categoryid = $_POST['categoryid'];
+   $query = "select * from category where categoryid=$categoryid";
+   $result = execute($query);
    $row = mysqli_fetch_assoc($result);
    echo json_encode($row);
 }
-if (isset($_POST['actionString']) && $_POST['actionString'] == "updateCompany") {
-   $companyid = $_POST['companyid'];
-   $name = $_POST['name'];
-   $marka = $_POST['marka'];
-   $description = $_POST['description'];
-
-   $query = "update  company set name='$name',marka='$marka',description='$description' where companyid='$companyid'";
-   if (mysqli_query($connection, $query))
-      echo "true";
-   else
-      echo "false";
-
-}
-
-
-// vendor company server pages
-
-if (isset($_POST['actionString']) && $_POST['actionString'] == "insertVendorCompany") {
-   $company = $_POST['company'];
-   $phone = $_POST['phone'];
-   $description = $_POST['description'];
-   $query = "insert into vendorcompany  (name,phone,description) values('$company','$phone','$description')";
-   if (mysqli_query($connection, $query))
-      echo "true";
-   else
-      echo "false";
-
-}
-
-if (isset($_POST['actionString']) && $_POST['actionString'] == "loadVendorCompany") {
-   $query = "select * from vendorcompany";
-   $result = mysqli_query($connection, $query);
-   $html = array();
-   while ($rows = mysqli_fetch_assoc($result)) {
-      $row = array();
-      $row[] = $rows['vendorcompanyid'];
-      $row[] = $rows['name'];
-      $row[] = $rows['phone'];
-      $row[] = $rows['description'];
-      $button = "<button class='btn btn-sm btn-primary mb-1 editButton' value='" . $rows['vendorcompanyid'] . "'>تصحیح</button>
-         <button class='btn btn-sm btn-danger mb-1 deleteButton' value='" . $rows['vendorcompanyid'] . "'>حذف</button>";
-      $row[] = $button;
-      $html[] = $row;
-   }
-   echo json_encode($html);
-
-}
-
-if (isset($_POST['actionString']) && $_POST['actionString'] == "deleteVendorCompany") {
-   $vendorcompanyid = $_POST['vendorcompanyid'];
-   $query = "delete from vendorcompany where vendorcompanyid=$vendorcompanyid";
-   if (mysqli_query($connection, $query))
-      echo "true";
-   else
-      echo "false";
-}
-if (isset($_POST['actionString']) && $_POST['actionString'] == "viewVendorCompany") {
-   $vendorcompanyid = $_POST['vendorcompanyid'];
-   $query = "select * from vendorcompany where vendorcompanyid=$vendorcompanyid";
-   $result = mysqli_query($connection, $query);
-   $row = mysqli_fetch_assoc($result);
-   echo json_encode($row);
-}
-if (isset($_POST['actionString']) && $_POST['actionString'] == "updateVendorCompany") {
-   $vendorcompanyid = $_POST['vendorcompanyid'];
-   $name = $_POST['name'];
-   $phone = $_POST['phone'];
-   $description = $_POST['description'];
-
-   $query = "update  vendorcompany set name='$name',phone='$phone',description='$description' where vendorcompanyid='$vendorcompanyid'";
-   if (mysqli_query($connection, $query))
-      echo "true";
-   else
-      echo "false";
-
-}
-
-
-// fabric page server codes
-
-
-if (isset($_POST['actionString']) && $_POST['actionString'] == "insertFabric") {
+if (isset($_POST['actionString']) && $_POST['actionString'] == "updateCategory") {
+   $categoryid = $_POST['categoryid'];
    $name = $_POST['name'];
    $description = $_POST['description'];
-   $abr = $_POST['abr'];
-   $query = "insert into fabric  (name,description,abr) values('$name','$description','$abr')";
-   if (mysqli_query($connection, $query))
-      echo "true";
-   else
-      echo "false";
 
-}
-
-if (isset($_POST['actionString']) && $_POST['actionString'] == "loadFabric") {
-   $query = "select * from fabric";
-   $result = mysqli_query($connection, $query);
-   $html = array();
-   while ($rows = mysqli_fetch_assoc($result)) {
-      $row = array();
-      $row[] = $rows['fabricid'];
-      $row[] = $rows['name'];
-      $row[] = $rows['abr'];
-      $row[] = $rows['description'];
-      $button = "<button class='btn btn-sm btn-primary mb-1 editButton' value='" . $rows['fabricid'] . "'>تصحیح</button>
-         <button class='btn btn-sm btn-danger mb-1 deleteButton' value='" . $rows['fabricid'] . "'>حذف</button>";
-      $row[] = $button;
-      $html[] = $row;
-   }
-   echo json_encode($html);
-
-}
-if (isset($_POST['actionString']) && $_POST['actionString'] == "loadCustomer") {
-   $query = "select * from customer";
-   $result = mysqli_query($connection, $query);
-   $html = array();
-   while ($rows = mysqli_fetch_assoc($result)) {
-      $row = array();
-      $row[] = $rows['customerid'];
-      $row[] = $rows['firstname'];
-      $row[] = $rows['phone'];
-      $row[] = $rows['address'];
-      $button = "<button class='btn btn-sm btn-primary mb-1 editButton' value='" . $rows['customerid'] . "'>تصحیح</button>
-         <button class='btn btn-sm btn-danger mb-1 deleteButton' value='" . $rows['customerid'] . "'>حذف</button>";
-      $row[] = $button;
-      $html[] = $row;
-   }
-   echo json_encode($html);
-
-}
-
-if (isset($_POST['actionString']) && $_POST['actionString'] == "deleteFabric") {
-   $fabricid = $_POST['fabricid'];
-   $query = "delete from fabric where fabricid=$fabricid";
-   if (mysqli_query($connection, $query))
-      echo "true";
-   else
-      echo "false";
-}
-if (isset($_POST['actionString']) && $_POST['actionString'] == "viewFabric") {
-   $fabricid = $_POST['fabricid'];
-   $query = "select * from fabric where fabricid=$fabricid";
-   $result = mysqli_query($connection, $query);
-   $row = mysqli_fetch_assoc($result);
-   echo json_encode($row);
-}
-if (isset($_POST['actionString']) && $_POST['actionString'] == "updateFabric") {
-   $fabricid = $_POST['fabricid'];
-   $name = $_POST['name'];
-   $abr = $_POST['abr'];
-   $description = $_POST['description'];
-
-   $query = "update  fabric set name='$name',abr='$abr',description='$description' where fabricid='$fabricid'";
-   if (mysqli_query($connection, $query))
-      echo "true";
-   else
-      echo "false";
-
-}
-
-// transport page server codes
-
-
-if (isset($_POST['actionString']) && $_POST['actionString'] == "insertTransport") {
-   $name = $_POST['name'];
-   $description = $_POST['description'];
-   $phone = $_POST['phone'];
-   $query = "insert into transport  (name,description,phone) values('$name','$description','$phone')";
-   if (mysqli_query($connection, $query))
-      echo "true";
-   else
-      echo "false";
-
-}
-
-if (isset($_POST['actionString']) && $_POST['actionString'] == "loadTransport") {
-   $query = "select * from transport";
-   $result = mysqli_query($connection, $query);
-   $html = array();
-   while ($rows = mysqli_fetch_assoc($result)) {
-      $row = array();
-      $row[] = $rows['transportid'];
-      $row[] = $rows['name'];
-      $row[] = $rows['phone'];
-      $row[] = $rows['description'];
-      $button = "<button class='btn btn-sm btn-primary mb-1 editButton' value='" . $rows['transportid'] . "'>تصحیح</button>
-         <button class='btn btn-sm btn-danger mb-1 deleteButton' value='" . $rows['transportid'] . "'>حذف</button>";
-      $row[] = $button;
-      $html[] = $row;
-   }
-   echo json_encode($html);
-
-}
-
-if (isset($_POST['actionString']) && $_POST['actionString'] == "deleteTransport") {
-   $transportid = $_POST['transportid'];
-   $query = "delete from transport where transportid=$transportid";
-   if (mysqli_query($connection, $query))
-      echo "true";
-   else
-      echo "false";
-}
-if (isset($_POST['actionString']) && $_POST['actionString'] == "viewTransport") {
-   $transportid = $_POST['transportid'];
-   $query = "select * from transport where transportid=$transportid";
-   $result = mysqli_query($connection, $query);
-   $row = mysqli_fetch_assoc($result);
-   echo json_encode($row);
-}
-if (isset($_POST['actionString']) && $_POST['actionString'] == "updateTransport") {
-   $transportid = $_POST['transportid'];
-   $name = $_POST['name'];
-   $phone = $_POST['phone'];
-   $description = $_POST['description'];
-
-   $query = "update  transport set name='$name',description='$description',phone='$phone' where transportid='$transportid'";
-   if (mysqli_query($connection, $query))
+   $query = "update  category set name='$name',description='$description' where categoryid='$categoryid'";
+   if (execute($query))
       echo "true";
    else
       echo "false";

@@ -1,15 +1,13 @@
 <?php
-if(isset($_GET['logout']))
-    {
-        session_start();
-        session_destroy();
-    }
+if (isset($_GET['logout'])) {
+    session_start();
+    session_destroy();
+}
 session_start();
-if(isset($_SESSION['login'])=='true')
-    {
-        header('location:index.php');
-        exit();
-    }
+if (isset($_SESSION['login']) == 'true') {
+    header('location:index.php');
+    exit();
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -23,9 +21,9 @@ if(isset($_SESSION['login'])=='true')
     <title>Fabric Management System</title>
     <link href="dist/css/sb-admin-2.css" rel="stylesheet">
     <style>
-    .inputError {
-        border: solid 1px red;
-    }
+        .inputError {
+            border: solid 1px red;
+        }
     </style>
 
 </head>
@@ -107,37 +105,37 @@ if(isset($_SESSION['login'])=='true')
     <!-- Bootstrap 4 -->
     <script src="plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
     <script>
-    $(document).ready(function() {
-        $('#loginButton').click(function() {
-            var username = $('#username');
-            var password = $('#password');
-            username.removeClass('inputError');
-            password.removeClass('inputError');
-            if (username.val() == "")
-                username.addClass('inputError');
-            else if (password.val() == "")
-                password.addClass('inputError');
-            else {
-                $.ajax({
-                    url: 'includes/process.php',
-                    type: 'post',
-                    data: {
-                        actionString: 'loginAuthentication',
-                        username: username.val(),
-                        password: password.val()
-                    },
-                    success: function(response) {
-                        if (response.trim() == 'false') {
-                            $('#messageModal').modal(
-                                'show');
-                        } else if (response.trim() == 'true') {
-                            $(location).attr('href', 'index.php');
+        $(document).ready(function () {
+            $('#loginButton').click(function () {
+                var username = $('#username');
+                var password = $('#password');
+                username.removeClass('inputError');
+                password.removeClass('inputError');
+                if (username.val() == "")
+                    username.addClass('inputError');
+                else if (password.val() == "")
+                    password.addClass('inputError');
+                else {
+                    $.ajax({
+                        url: 'includes/process.php',
+                        type: 'post',
+                        data: {
+                            actionString: 'loginAuthentication',
+                            username: username.val(),
+                            password: password.val()
+                        },
+                        success: function (response) {
+                            if (response.trim() == 'false') {
+                                $('#messageModal').modal(
+                                    'show');
+                            } else if (response.trim() == 'true') {
+                                $(location).attr('href', 'index.php');
+                            }
                         }
-                    }
-                });
-            }
+                    });
+                }
+            });
         });
-    });
     </script>
 
 

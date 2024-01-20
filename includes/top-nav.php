@@ -2,11 +2,10 @@
     <!-- Left navbar links -->
     <ul class="navbar-nav">
         <li class="nav-item">
-            <a class="nav-link" data-widget="pushmenu"  href="#"> <i class="fa fa-bars"></i></a>
+            <a class="nav-link" data-widget="pushmenu" href="#"> <i class="fa fa-bars"></i></a>
         </li>
 
     </ul>
-    <a  href='begakpage.php' target='_blank' class='btn btn-primary mr-5'>بیجک</a>
 
     <!-- Topbar Navbar -->
     <ul class="navbar-nav mr-auto">
